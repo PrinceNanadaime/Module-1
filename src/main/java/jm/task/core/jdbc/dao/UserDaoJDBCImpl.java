@@ -79,19 +79,33 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public List<User> getAllUsers() {
+        List<User> userList = new LinkedList<>();
+        String sql = "SELECT * FROM testTable ";
+
+        try(Connection connection = util.getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                User user = new User();
+                user.setId(resultSet.getLong(1));
+                user.setName(resultSet.getString(2));
+                user.setLastName(resultSet.getString(3));
+                user.setAge(resultSet.getByte(4));
+                userList.add(user);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return userList;
     }
 
     public void cleanUsersTable() {
-        userList.clear();
-        try (Connection connection = util.getConnection();
-             PreparedStatement statement = connection.prepareStatement("delete from testTable where id = ?")){
-            for (User user:getAllUsers()){
-                statement.setLong(1,user.getId());
-                statement.executeUpdate();
-            }
-            System.out.println("\nUsers' table was cleaned!");
-        } catch (SQLException e) {
+        String sql = "TRUNCATE TABLE testTable";
+        try(Connection connection = util.getConnection()) {
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(sql);
+            System.out.println("Table is cleaned!");
+        }catch (SQLException e) {
             e.printStackTrace();
         }
     }
