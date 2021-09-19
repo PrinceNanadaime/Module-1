@@ -4,6 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "testtable", schema = "mysql")
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
