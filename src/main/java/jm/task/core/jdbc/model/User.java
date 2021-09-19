@@ -1,19 +1,19 @@
 package jm.task.core.jdbc.model;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
-@Table
+@Entity
+@Table(name = "testtable", schema = "mysql")
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private String name;
+    private String first;
 
     @Column
-    private String lastName;
+    private String last;
 
     @Column
     private Byte age;
@@ -23,8 +23,8 @@ public class User {
     }
 
     public User(String name, String lastName, Byte age) {
-        this.name = name;
-        this.lastName = lastName;
+        this.first = name;
+        this.last = lastName;
         this.age = age;
     }
 
@@ -43,19 +43,19 @@ public class User {
     }
 
     public String getName() {
-        return name;
+        return first;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.first = name;
     }
 
     public String getLastName() {
-        return lastName;
+        return last;
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        this.last = lastName;
     }
 
     public Byte getAge() {

@@ -10,7 +10,6 @@ import java.util.List;
 public class UserDaoJDBCImpl implements UserDao {
 
     private final Util util = new Util();
-    private long idCounter = 1;
 
     public UserDaoJDBCImpl() {
 
@@ -19,10 +18,12 @@ public class UserDaoJDBCImpl implements UserDao {
     public void createUsersTable() {
         try(Connection connection = util.getConnection(); Statement statement = connection.createStatement()) {
             statement.execute("CREATE TABLE IF NOT EXISTS testTable" +
-                    "(id LONG not NULL, " +
-                    " first VARCHAR(255), " +
-                    " last VARCHAR(255), " +
-                    " age TINYINT) ");
+                    "( id INTEGER(1) NOT NULL AUTO_INCREMENT," +
+                    "  first VARCHAR(255)," +
+                    "  last VARCHAR(255)," +
+                    "  age SMALLINT ," +
+                    "  CONSTRAINT pk PRIMARY KEY (id)" +
+                    ");");
             System.out.println("Table was created!\n");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -40,13 +41,11 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void saveUser(String name, String lastName, byte age) {
         try (Connection connection = util.getConnection(); PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO testTable (id, first, last, age) VALUES (?,?,?,?);")){
-            statement.setLong(1,idCounter);
-            statement.setString(2,name);
-            statement.setString(3,lastName);
-            statement.setByte(4,age);
+                "INSERT INTO testTable (first, last, age) VALUES (?,?,?);")){
+            statement.setString(1,name);
+            statement.setString(2,lastName);
+            statement.setByte(3,age);
             statement.executeUpdate();
-            idCounter++;
             System.out.println("User с именем – "+ name +" добавлен в базу данных!");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -73,10 +72,10 @@ public class UserDaoJDBCImpl implements UserDao {
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 User user = new User();
-                user.setId(resultSet.getLong(1));
-                user.setName(resultSet.getString(2));
-                user.setLastName(resultSet.getString(3));
-                user.setAge(resultSet.getByte(4));
+                user.setId(resultSet.getLong("id"));
+                user.setName(resultSet.getString("first"));
+                user.setLastName(resultSet.getString("last"));
+                user.setAge(resultSet.getByte("age"));
                 userList.add(user);
             }
         } catch (SQLException e) {
