@@ -42,7 +42,7 @@ public class Util implements AutoCloseable {
             if (connection != null &&!connection.isClosed()) {
                 connection.close();
             }
-        } catch (SQLException | NullPointerException e) {
+        }catch (SQLException | NullPointerException e) {
             e.printStackTrace();
         }
     }
