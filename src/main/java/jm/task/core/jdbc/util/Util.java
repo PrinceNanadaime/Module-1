@@ -14,6 +14,14 @@ import java.sql.SQLException;
 
 public class Util implements AutoCloseable {
 
+    public static SessionFactory getSessionFactory() {
+        EntityManagerFactory emf =
+                Persistence.createEntityManagerFactory("default_class");
+        EntityManager entityManager = emf.createEntityManager();
+        Session session = entityManager.unwrap(org.hibernate.Session.class);
+        return session.getSessionFactory();
+    }
+
     private Connection connection;
 
     public Connection getConnection(){
@@ -26,16 +34,6 @@ public class Util implements AutoCloseable {
             e.printStackTrace();
         }
         return connection;
-    }
-
-    private static StandardServiceRegistry registry;
-
-    public static SessionFactory getSessionFactory() {
-        EntityManagerFactory emf =
-                Persistence.createEntityManagerFactory("default_class");
-        EntityManager entityManager = emf.createEntityManager();
-        Session session = entityManager.unwrap(org.hibernate.Session.class);
-        return session.getSessionFactory();
     }
 
     @Override
