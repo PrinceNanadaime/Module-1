@@ -19,7 +19,6 @@ public class Util {
                 new StandardServiceRegistryBuilder();
 
         Map<String, String> settings = new HashMap<>();
-
         settings.put("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
         settings.put("hibernate.connection.password", "root");
         settings.put("hibernate.connection.url", "jdbc:mysql://localhost:3306/mysql");
