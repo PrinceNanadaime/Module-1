@@ -1,49 +1,47 @@
 package jm.task.core.jdbc.util;
 
-import java.sql.Connection;
 import com.mysql.cj.jdbc.Driver;
-import org.hibernate.Session;
+import jm.task.core.jdbc.model.User;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Util implements AutoCloseable {
+public class Util {
 
     public static SessionFactory getSessionFactory() {
-        EntityManagerFactory emf =
-                Persistence.createEntityManagerFactory("default_class");
-        EntityManager entityManager = emf.createEntityManager();
-        Session session = entityManager.unwrap(org.hibernate.Session.class);
-        return session.getSessionFactory();
+        StandardServiceRegistryBuilder registryBuilder =
+                new StandardServiceRegistryBuilder();
+
+        Map<String, String> settings = new HashMap<>();
+
+        settings.put("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
+        settings.put("hibernate.connection.password", "root");
+        settings.put("hibernate.connection.url", "jdbc:mysql://localhost:3306/mysql");
+        settings.put("hibernate.connection.username", "root");
+        settings.put("hibernate.show_sql", "true");
+
+        registryBuilder.applySettings(settings);
+        MetadataSources sources = new MetadataSources(registryBuilder.build())
+                .addAnnotatedClass(User.class);
+        return sources.buildMetadata().buildSessionFactory();
     }
 
-    private Connection connection;
-
-    public Connection getConnection(){
+    public static Connection getConnection() {
+        Connection connection = null;
         try {
             Driver driver = new Driver();
             DriverManager.registerDriver(driver);
-            this.connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mysql",
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mysql",
                     "root", "root");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return connection;
-    }
-
-    @Override
-    public void close(){
-        try {
-            if (connection != null &&!connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException | NullPointerException e) {
-            e.printStackTrace();
-        }
     }
 }
